@@ -29,7 +29,7 @@ func New(address string) *RedisCache {
 	return redis
 }
 
-func (s *RedisCache) SetCache(ctx context.Context, key string, value interface{}) error {
+func (s *RedisCache) Set(ctx context.Context, key string, value interface{}) error {
 	return s.client.Set(&cache.Item{
 		Ctx:   ctx,
 		Key:   key,
@@ -37,8 +37,12 @@ func (s *RedisCache) SetCache(ctx context.Context, key string, value interface{}
 	})
 }
 
-func (s *RedisCache) GetCache(ctx context.Context, key string) (interface{}, error) {
+func (s *RedisCache) Get(ctx context.Context, key string) (interface{}, error) {
 	var values interface{}
 	err := s.client.Get(ctx, key, &values)
 	return values, err
+}
+
+func (s *RedisCache) Del(ctx context.Context, key string) error {
+	return s.client.Delete(ctx, key)
 }

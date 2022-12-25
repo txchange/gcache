@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"time"
 
 	"github.com/go-redis/cache/v8"
 	"github.com/go-redis/redis/v8"
@@ -29,11 +30,12 @@ func New(address string) *RedisCache {
 	return redis
 }
 
-func (s *RedisCache) Set(ctx context.Context, key string, value interface{}) error {
+func (s *RedisCache) Set(ctx context.Context, key string, value interface{}, ttl time.Duration) error {
 	return s.client.Set(&cache.Item{
 		Ctx:   ctx,
 		Key:   key,
 		Value: value,
+		TTL:   ttl,
 	})
 }
 

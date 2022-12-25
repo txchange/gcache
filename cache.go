@@ -1,12 +1,13 @@
-package trem
+package gcache
 
 import (
 	"context"
+	"time"
 )
 
 type (
 	CacheClient interface {
-		Set(ctx context.Context, key string, value interface{}) error
+		Set(ctx context.Context, key string, value interface{}, ttl time.Duration) error
 		Get(ctx context.Context, key string) (interface{}, error)
 		Del(ctx context.Context, key string) error
 	}
@@ -26,7 +27,11 @@ func New(client CacheClient) *Cache {
 }
 
 func (s *Cache) Set(key string, value interface{}) error {
-	return s.client.Set(context.TODO(), key, value)
+	return s.client.Set(context.TODO(), key, value, time.Duration(1)*time.Hour)
+}
+
+func (s *Cache) SetNX(ctx context.Context, key string, value interface{}, ttl time.Duration) error {
+	return s.client.Set(ctx, key, value, ttl)
 }
 
 func (s *Cache) Get(key string) (interface{}, error) {
@@ -38,7 +43,7 @@ func (s *Cache) Del(key string) error {
 }
 
 func (s *Cache) SetX(ctx context.Context, key string, value interface{}) error {
-	return s.client.Set(ctx, key, value)
+	return s.client.Set(ctx, key, value, time.Duration(1)*time.Hour)
 }
 
 func (s *Cache) GetX(ctx context.Context, key string) (interface{}, error) {
